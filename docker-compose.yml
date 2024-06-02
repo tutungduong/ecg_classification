@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  client:
+    image: tutungduong/ecg_classification:client
+    ports:
+      - "8000:8000"
+    depends_on:
+      - server
+      - mongo_db
+    environment:
+      - MONGO_URL=mongodb://mongo_db:27017/ecg_classification
+
+  server:
+    image: tutungduong/ecg_classification:server
+    ports:
+      - "5000:5000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - MONGO_URL=mongodb://mongo_db:27017/ecg_classification
+
+  mongo_db:
+    image: tutungduong/ecg_classification:mongo
+    ports:
+      - "27017:27017"
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=ecg_classification
+    logging: none
+
+volumes:
+  mongo-data: {}
