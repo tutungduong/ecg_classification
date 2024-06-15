@@ -34,7 +34,6 @@ services:
       - mongo-data:/data/db
     environment:
       - MONGO_INITDB_DATABASE=ecg_classification
-    logging: none
 
 volumes:
   mongo-data: {}
